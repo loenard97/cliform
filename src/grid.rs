@@ -1,21 +1,27 @@
-pub struct Grid {
-    row: Vec<String>,
+pub struct Grid<T> {
+    row: Vec<T>,
     padding: usize,
     _max_len: usize,
 }
 
-impl Grid {
-    pub fn new(padding: usize, max_len: usize) -> Grid {
+impl<T: std::fmt::Display> Grid<T> {
+    pub fn new(padding: usize, max_len: usize) -> Grid<T> {
         Grid { row: vec![], padding, _max_len: max_len }
     }
 
-    pub fn from_vec(row: Vec<String>, padding: usize, max_len: usize) -> Grid {
+    pub fn push(&mut self, item: T) -> &mut Self {
+        self.row.push(item);
+        
+        self
+    }
+
+    pub fn from_vec(row: Vec<T>, padding: usize, max_len: usize) -> Grid<T> {
         Grid { row, padding, _max_len: max_len }
     }
 
     pub fn to_string(self) -> String {
         let max_size = self.row.iter()
-            .map(|s| { s.len() })
+            .map(|s| { s.to_string().len() })
             .max().unwrap()
             + self.padding;
         let mut result = String::new();

@@ -10,6 +10,34 @@ A rust library to format the output of cli programs
 
 
 ## ▶️ Usage
-### Tables
+### Grid
+```rust
+let grid = Grid::new();
+grid.push("Hello")
+    .push("World")
+    .push("!")
 
-### Trees
+println!("{}", grid.to_string());
+```
+
+```sh
+Hello  World  !
+```
+
+### Table
+
+### Tree
+```rust
+let tree = Tree::new();
+tree.push("first", 0)
+    .push("second", 1)
+    .push("third", 1)
+
+println!("{}", tree.to_string());
+```
+
+```sh
+├─ first
+│  ├─ second
+│  └─ third
+```

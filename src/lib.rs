@@ -4,4 +4,4 @@ mod tree;
 
 pub use grid::Grid;
 pub use table::Table;
-pub use tree::Tree;
+pub use tree::{Tree, TreeStyle};
