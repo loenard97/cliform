@@ -13,9 +13,9 @@ A rust library to format the output of cli programs
 ### Grid
 ```rust
 let grid = Grid::new();
-grid.push("Hello")
-    .push("World")
-    .push("!")
+grid.push("Hello");
+grid.push("World");
+grid.push("!");
 
 println!("{}", grid.to_string());
 ```
@@ -25,13 +25,30 @@ Hello  World  !
 ```
 
 ### Table
+```rust
+let mut table = Table::new();
+table.header(vec!["first", "second", "third"]);
+table.push(vec!["Hello", "World", "!"]);
+table.push(vec!["How", "are", "you?"]):
+table.push(vec!["Great", "weather", "right?"]);
+
+println!("{}", table.to_string());
+```
+
+```sh
+first    second   third
+───────────────────────────
+Hello    World    !
+How      are      you?
+Great    weather  right?
+```
 
 ### Tree
 ```rust
 let tree = Tree::new();
-tree.push("first", 0)
-    .push("second", 1)
-    .push("third", 1)
+tree.push("first", 0);
+tree.push("second", 1);
+tree.push("third", 1);
 
 println!("{}", tree.to_string());
 ```
