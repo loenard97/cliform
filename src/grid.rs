@@ -1,33 +1,36 @@
 pub struct Grid<T> {
-    row: Vec<T>,
-    padding: usize,
-    _max_len: usize,
+    content: Vec<T>,
 }
 
 impl<T: std::fmt::Display> Grid<T> {
-    pub fn new(padding: usize, max_len: usize) -> Grid<T> {
-        Grid { row: vec![], padding, _max_len: max_len }
+    pub fn new() -> Self {
+        Grid { content: vec![] }
     }
 
-    pub fn push(&mut self, item: T) -> &mut Self {
-        self.row.push(item);
-        
-        self
+    pub fn from_vec(row: Vec<T>) -> Grid<T> {
+        Grid { content: row }
     }
 
-    pub fn from_vec(row: Vec<T>, padding: usize, max_len: usize) -> Grid<T> {
-        Grid { row, padding, _max_len: max_len }
+    pub fn push(&mut self, item: T) {
+        self.content.push(item);
     }
 
-    pub fn to_string(self) -> String {
-        let max_size = self.row.iter()
-            .map(|s| { s.to_string().len() })
-            .max().unwrap()
-            + self.padding;
+    pub fn to_string(self, padding: usize, max_len: usize) -> String {
         let mut result = String::new();
+        let mut i = 0;
+        let max_size = self.content.iter()
+            .map(|s| { s.to_string().len() })
+            .max().unwrap_or_default()
+            + padding;
+        let items_per_row = max_len / max_size;
 
-        for item in self.row {
+        for item in self.content {
+            if i == items_per_row {
+                result.push('\n');
+                i = 0;
+            }
             result.push_str(&format!("{item: <max_size$}"));
+            i += 1;
         }
         result = result.trim_end_matches(' ').to_string();
 
@@ -40,21 +43,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn grid() {
+    fn empty() {
+        let grid: Grid<&str> = Grid::new();
+        assert_eq!(
+            grid.to_string(2, 10),
+            ""
+        )
+    }
+
+    #[test]
+    fn small() {
         let input = vec![
             String::from("Hello"),
             String::from("World"),
         ];
-        let grid = Grid::from_vec(input, 2, 100);
+        let grid = Grid::from_vec(input);
 
         assert_eq!(
-            grid.to_string(),
+            grid.to_string(2, 100),
             "Hello  World",
         );
     }
 
     #[test]
-    fn grid_long() {
+    fn long() {
         let input = vec![
             String::from("a"), 
             String::from("ab"),
@@ -63,11 +75,22 @@ mod tests {
             String::from("abcde"),
             String::from("abcdef"),
         ];
-        let grid = Grid::from_vec(input, 2, 100);
+        let grid = Grid::from_vec(input);
 
         assert_eq!(
-            grid.to_string(), 
+            grid.to_string(2, 100), 
             "a       ab      abc     abcd    abcde   abcdef"
+        );
+    }
+
+    #[test]
+    fn wrap() {
+        let grid = Grid::from_vec(vec![ "hi", "test", "two", "three", "wrap", "this" ]);
+        assert_eq!(
+            grid.to_string(2, 15),
+"hi     test   
+two    three  
+wrap   this"
         );
     }
 }
