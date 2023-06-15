@@ -12,26 +12,30 @@ struct TreeItem<T> {
 
 pub struct Tree<T> {
     row: Vec<TreeItem<T>>,
+    style: TreeStyle,
 }
 
 impl<T: std::fmt::Display> Tree<T> {
     pub fn new() -> Tree<T> {
-        Tree { row: vec![] }
+        Tree { row: vec![], style: TreeStyle::Lines }
     }
 
-    pub fn push(&mut self, value: T, depth: usize, is_last: bool) -> &mut Self {
+    pub fn push(&mut self, value: T, depth: usize, is_last: bool) {
         self.row.push(
             TreeItem { value, depth, is_last }
         );
-        self
     }
 
-    pub fn to_string(&self, style: TreeStyle) -> String {
+    pub fn style(&mut self, style: TreeStyle) {
+        self.style = style;
+    }
+
+    pub fn to_string(&self) -> String {
         let mut result = String::new();
 
         for item in &self.row {
 
-            match style {
+            match self.style {
                 TreeStyle::Lines => {
                     result.push_str(&"│ ".repeat(item.depth));
                     if item.is_last {
@@ -60,18 +64,27 @@ mod tests {
     use super::*;
 
     #[test]
+    fn empty() {
+        let tree: Tree<&str> = Tree::new();
+        assert_eq!(
+            tree.to_string(),
+            ""
+        )
+    }
+
+    #[test]
     fn lines() {
         let mut tree = Tree::new();
-        tree.push("first", 0, false)
-            .push("first", 0, false)
-            .push("second", 0, false)
-            .push("2-1", 1, false)
-            .push("2-2", 1, false)
-            .push("2-3", 1, true)
-            .push("third", 0, false);
+        tree.push("first", 0, false);
+        tree.push("first", 0, false);
+        tree.push("second", 0, false);
+        tree.push("2-1", 1, false);
+        tree.push("2-2", 1, false);
+        tree.push("2-3", 1, true);
+        tree.push("third", 0, false);
 
         assert_eq!(
-            tree.to_string(TreeStyle::Lines),
+            tree.to_string(),
 "├─ first
 ├─ first
 ├─ second
@@ -85,16 +98,17 @@ mod tests {
     #[test]
     fn spaces() {
         let mut tree = Tree::new();
-        tree.push("first", 0, false)
-            .push("first", 0, false)
-            .push("second", 0, false)
-            .push("2-1", 1, false)
-            .push("2-2", 1, false)
-            .push("2-3", 1, true)
-            .push("third", 0, false);
+        tree.style(TreeStyle::Spaces);
+        tree.push("first", 0, false);
+        tree.push("first", 0, false);
+        tree.push("second", 0, false);
+        tree.push("2-1", 1, false);
+        tree.push("2-2", 1, false);
+        tree.push("2-3", 1, true);
+        tree.push("third", 0, false);
 
         assert_eq!(
-            tree.to_string(TreeStyle::Spaces),
+            tree.to_string(),
 "first
 first
 second

@@ -29,18 +29,23 @@ impl<T: std::fmt::Display> Table<T> {
     pub fn new() -> Table<T> {
         let header = vec![];
         let content = vec![vec![]];
-        let n_cols = header.len();
-        let max_size = 0;
+        let max_cols = header.len();
+        let max_col_size = 0;
         let style = TableStyle { 
             header: TableHeaderStyle::LeftAlign, 
             lines: TableLineStyle::Lines
         };
 
-        return Table { header, content, max_cols: n_cols, max_col_size: max_size, style }
+        return Table { header, content, max_cols, max_col_size, style }
     }
 
     pub fn header(&mut self, header: Vec<T>) {
         self.max_cols = usize::max(self.max_cols, header.len());
+        let max_size = header.iter()
+            .map(|item| { item.to_string().len() })
+            .max()
+            .unwrap();
+        self.max_col_size = usize::max(self.max_col_size, max_size);
         self.header = header;
     }
 
@@ -59,6 +64,10 @@ impl<T: std::fmt::Display> Table<T> {
     }
 
     pub fn to_string(&self, padding: usize) -> String {
+        if self.max_cols == 0 {
+            return String::new();
+        }
+
         let col_width = self.max_col_size + padding;
         let mut result = String::new();
 
@@ -89,6 +98,27 @@ impl<T: std::fmt::Display> Table<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn empty() {
+        let table: Table<&str> = Table::new();
+        assert_eq!(
+            table.to_string(2),
+            ""
+        )
+    }
+
+    #[test]
+    fn emtpy_with_header() {
+        let mut table = Table::new();
+        table.header(vec!["First", "Second", "Third"]);
+
+        assert_eq!(
+            table.to_string(2),
+"First   Second  Third
+──────────────────────"
+        )
+    }
 
     #[test]
     fn table() {
