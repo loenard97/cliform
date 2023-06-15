@@ -22,7 +22,7 @@ impl<T: std::fmt::Display> Grid<T> {
     pub fn to_string(self) -> String {
         let max_size = self.row.iter()
             .map(|s| { s.to_string().len() })
-            .max().unwrap()
+            .max().unwrap_or_default()
             + self.padding;
         let mut result = String::new();
 
@@ -38,6 +38,15 @@ impl<T: std::fmt::Display> Grid<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn empty() {
+        let grid: Grid<String> = Grid::new(2, 100);
+        assert_eq!(
+            grid.to_string(),
+            "",
+        );
+    }
 
     #[test]
     fn grid() {
