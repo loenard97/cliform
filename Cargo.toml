@@ -2,6 +2,13 @@
 name = "cliform"
 version = "0.1.0"
 edition = "2021"
+license = "OSL-3.0"
+description = "A simple way to format the output of your cli application."
+authors = ["Dennis Lönard"]
+homepage = "https://github.com/loenard97/cliform"
+repository = "https://github.com/loenard97/cliform"
+keywords = ["terminal", "console"]
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
